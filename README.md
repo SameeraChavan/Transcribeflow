@@ -3,12 +3,12 @@ Transcribe Flow is an AI-powered web application that converts speech and audio 
 The project is developed using Python and Flask for the backend, with a structured separation of frontend, backend, and database components. Working on this project helped me gain practical experience in web development, speech recognition, user authentication, and integrating AI-based features into real-world applications.
 
 # Feature
--AI-based speech-to-text web application
--Converts audio and voice recordings into text
--Supports audio file upload and live recording
--Secure user authentication system
--Built using Python, Flask, HTML, CSS
--Simple, responsive, and user-friendly interface
+- AI-based speech-to-text web application
+- Converts audio and voice recordings into text
+- Supports audio file upload and live recording
+- Secure user authentication system
+- Built using Python, Flask, HTML, CSS
+- Simple, responsive, and user-friendly interface
 
 # Output
 <img width="1874" height="798" alt="image" src="https://github.com/user-attachments/assets/b9a00de0-87a7-4d70-9daf-4834e3a1c65e" />
