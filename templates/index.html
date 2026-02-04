@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🎤 Transcription Flow</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="card">
+
+    <!-- LOGOUT BOX (LEFT SIDE) -->
+    <div class="logout-box">
+        <a href="{{ url_for('logout') }}" class="logout-btn">⏻ Logout</a>
+    </div>
+
+    <h1>🎤 Transcribe Flow</h1>
+    <p class="subtitle">AI Powered Transcription and Summary</p>
+
+    <!-- Upload -->
+    <div class="upload-container">
+        <label class="upload-box">
+            🎵 Upload Audio
+            <input type="file" id="audioFile" accept=".mp3,.wav">
+        </label>
+    </div>
+
+    <!-- Upload success -->
+    <div class="success" id="successMsg">✅ Audio uploaded successfully</div>
+
+    <!-- Transcribe Button -->
+    <button class="transcribe-btn" onclick="uploadAudio()">🚀 Transcribe Audio</button>
+
+    <!-- Processing -->
+    <div class="processing" id="processing">
+        <div class="spinner"></div>
+        <p>Processing audio, please wait...</p>
+    </div>
+
+    <p class="error" id="error"></p>
+
+    <!-- Audio Player -->
+    <audio id="player" controls style="display:none;"></audio>
+
+    <!-- Transcription Section -->
+    <div class="section">
+        <h2>📝 Transcription</h2>
+        <div class="output-box transcript-box processed-text" id="transcript">
+            Your transcription will appear here...
+        </div>
+
+        <div class="download-buttons" id="transcriptBtns" style="display:none;">
+            <button class="download-btn" onclick="downloadTxt('transcript')">TXT</button>
+            <button class="download-btn" onclick="downloadPdf('transcript')">PDF</button>
+            <select id="downloadLangTranscript" class="lang-select">
+                <option value="en">English</option>
+                <option value="hi">Hindi</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+                <option value="it">Italian</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Summary Section -->
+    <div class="section">
+        <h2>📌 Summary</h2>
+        <div class="output-box summary-box processed-text" id="summary">
+            Your summary will appear here...
+        </div>
+
+        <div class="download-buttons" id="summaryBtns" style="display:none;">
+            <button class="download-btn" onclick="downloadTxt('summary')">TXT</button>
+            <button class="download-btn" onclick="downloadPdf('summary')">PDF</button>
+            <select id="downloadLangSummary" class="lang-select">
+                <option value="en">English</option>
+                <option value="hi">Hindi</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+                <option value="it">Italian</option>
+            </select>
+        </div>
+    </div>
+
+</div>
+
+<script>
+const fileInput = document.getElementById("audioFile");
+const successMsg = document.getElementById("successMsg");
+const errorEl = document.getElementById("error");
+const processing = document.getElementById("processing");
+const transcriptEl = document.getElementById("transcript");
+const summaryEl = document.getElementById("summary");
+const player = document.getElementById("player");
+const transcriptBtns = document.getElementById("transcriptBtns");
+const summaryBtns = document.getElementById("summaryBtns");
+
+// Upload success
+fileInput.addEventListener("change", () => {
+    errorEl.textContent = "";
+    if (fileInput.files.length > 0) {
+        const ext = fileInput.files[0].name.split('.').pop().toLowerCase();
+        if (ext === "mp3" || ext === "wav") {
+            successMsg.classList.add("show");
+            setTimeout(() => successMsg.classList.remove("show"), 3000);
+        } else {
+            errorEl.textContent = "❌ Only MP3 or WAV files allowed";
+        }
+    }
+});
+
+// Transcribe audio
+async function uploadAudio() {
+    if (!fileInput.files.length) {
+        errorEl.textContent = "❌ Please select an audio file";
+        return;
+    }
+
+    processing.style.display = "flex";
+    errorEl.textContent = "";
+    transcriptBtns.style.display = "none";
+    summaryBtns.style.display = "none";
+    player.style.display = "none";
+
+    const formData = new FormData();
+    formData.append("audio", fileInput.files[0]);
+
+    try {
+        const res = await fetch("/", { method: "POST", body: formData });
+        const data = await res.json();
+        processing.style.display = "none";
+
+        if (data.error) {
+            errorEl.textContent = data.error;
+        } else {
+            transcriptEl.textContent = data.transcript;
+            summaryEl.textContent = data.summary;
+            player.src = URL.createObjectURL(fileInput.files[0]);
+            player.style.display = "block";
+            transcriptBtns.style.display = "flex";
+            summaryBtns.style.display = "flex";
+        }
+    } catch {
+        processing.style.display = "none";
+        errorEl.textContent = "❌ Server error. Try again later.";
+    }
+}
+</script>
+
+</body>
+</html>

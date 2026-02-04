@@ -1,0 +1,108 @@
+* { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+body { margin:0; min-height:100vh; background: linear-gradient(135deg,#1f2240,#2a2f5e,#3b4390); display:flex; justify-content:center; align-items:center; padding:40px 0; }
+
+/* Card */
+.card { width:90%; max-width:700px; background:#2f334d; padding:40px; border-radius:20px; box-shadow:0 0 15px #6366f1,0 0 30px #4f46e5; border:2px solid #6366f1; color:#e0e0e0; }
+
+/* Headings */
+h1 { text-align:center; font-size:2.2rem; font-family:'Poppins',sans-serif; color:#ffffff; }
+.subtitle { text-align:center; color:#a1a1a1; margin-bottom:25px; }
+
+/* Upload */
+.upload-container { display:flex; justify-content:center; }
+.upload-box { padding:14px 32px; border-radius:50px; background: linear-gradient(135deg, #4f46e5, #6366f1); color:white; font-weight:600; cursor:pointer; box-shadow:0 5px 15px rgba(79,70,229,0.4),0 0 8px rgba(99,102,241,0.4); transition:0.3s; font-size:14px; }
+.upload-box:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(79,70,229,0.6),0 0 12px rgba(99,102,241,0.6); }
+input[type="file"] { display:none; }
+
+/* Success */
+.success { text-align:center; margin-top:10px; color:#16a34a; font-weight:600; opacity:0; transition:0.4s; }
+.success.show { opacity:1; }
+
+/* Transcribe Button */
+.transcribe-btn { width:100%; padding:18px; margin-top:20px; border:none; border-radius:20px; background: linear-gradient(135deg, #4f46e5, #6366f1); color:white; font-size:20px; font-weight:700; font-family:'Poppins',sans-serif; cursor:pointer; transition:0.3s; box-shadow:0 5px 15px rgba(79,70,229,0.5); }
+.transcribe-btn:hover { transform:translateY(-3px); box-shadow:0 8px 20px rgba(79,70,229,0.7); background: linear-gradient(135deg,#6366f1,#4f46e5); }
+
+/* Processing */
+.processing { display:none; flex-direction:column; align-items:center; margin-top:18px; color:#ffffff; }
+.spinner { width:36px; height:36px; border:4px solid #c7d2fe; border-top:4px solid #4338ca; border-radius:50%; animation:spin 1s linear infinite; }
+@keyframes spin { 100%{ transform:rotate(360deg); } }
+
+/* Error */
+.error { text-align:center; margin-top:12px; color:#f87171; font-weight:600; }
+
+/* Sections */
+.section { margin-top:30px; }
+.section h2 { font-family:'Poppins',sans-serif; }
+
+/* Output Boxes */
+.output-box { padding:18px; border-radius:14px; min-height:120px; line-height:1.6; font-family:'Times New Roman',serif; font-size:17px; overflow-y:auto; max-height:250px; border:1px solid rgba(255,255,255,0.2); box-shadow:0 0 5px rgba(0,0,0,0.2); transition:0.3s; }
+.transcript-box { background:#3b3f60; color:#e0e0e0; border:1px solid #6366f1; box-shadow:0 0 5px #6366f1; }
+.summary-box { background:#3b3f60; color:#e0e0e0; border:1px solid #6366f1; box-shadow:0 0 5px #6366f1; }
+
+/* Audio Player */
+audio { width:100%; margin-top:15px; border-radius:10px; outline:none; }
+
+/* Download Buttons & Language */
+.download-buttons { display:flex; align-items:center; gap:10px; margin-top:12px; flex-wrap:wrap; }
+.download-btn { background: linear-gradient(135deg,#3ac6ff,#0ea5e9); border:none; border-radius:12px; padding:6px 14px; color:#fff; cursor:pointer; font-weight:600; font-size:13px; box-shadow:0 0 8px #0ea5e9; transition:0.3s; }
+.download-btn:hover { transform:translateY(-2px); box-shadow:0 0 16px #3ac6ff; }
+
+/* Language select */
+.lang-select { border-radius:12px; padding:6px 12px; background:#2f334d; color:#fff; border:1px solid #6366f1; cursor:pointer; font-family:'Poppins',sans-serif; font-weight:600; font-size:13px; transition:0.3s; }
+.lang-select:hover { border:1px solid #3ac6ff; }
+
+/* Custom scrollbar for transcript & summary boxes */
+.output-box::-webkit-scrollbar {
+    width: 12px; /* width of the scrollbar */
+}
+
+.output-box::-webkit-scrollbar-track {
+    background: #2f334d; /* matches card background */
+    border-radius: 10px;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+}
+
+.output-box::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #4f46e5, #6366f1); /* nice gradient like your buttons */
+    border-radius: 10px;
+    box-shadow: 0 0 6px rgba(99,102,241,0.6);
+    transition: background 0.3s, box-shadow 0.3s;
+}
+
+.output-box::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    box-shadow: 0 0 12px rgba(79,70,229,0.8);
+}
+
+/* Optional: smooth scrolling inside the boxes */
+.output-box {
+    scroll-behavior: smooth;
+}
+
+/* ---------- LOGOUT BOX INSIDE CARD ---------- */
+.logout-box {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    padding: 6px 16px;
+    border-radius: 16px;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+}
+
+/* Logout button text */
+.logout-btn {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Hover effect */
+.logout-box:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
