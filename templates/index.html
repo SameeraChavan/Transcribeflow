@@ -8,13 +8,14 @@
 </head>
 <body>
 
+    <button id="themeBtn" class="theme-btn" onclick="toggleTheme()">☀ Light</button>
+
+    <!-- Logout Button -->
+<div class="logout-container">
+    <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+</div>
+
 <div class="card">
-
-    <!-- LOGOUT BOX (LEFT SIDE) -->
-    <div class="logout-box">
-        <a href="{{ url_for('logout') }}" class="logout-btn">⏻ Logout</a>
-    </div>
-
     <h1>🎤 Transcribe Flow</h1>
     <p class="subtitle">AI Powered Transcription and Summary</p>
 
@@ -49,7 +50,7 @@
         <div class="output-box transcript-box processed-text" id="transcript">
             Your transcription will appear here...
         </div>
-
+        <!-- Download & Language -->
         <div class="download-buttons" id="transcriptBtns" style="display:none;">
             <button class="download-btn" onclick="downloadTxt('transcript')">TXT</button>
             <button class="download-btn" onclick="downloadPdf('transcript')">PDF</button>
@@ -70,7 +71,7 @@
         <div class="output-box summary-box processed-text" id="summary">
             Your summary will appear here...
         </div>
-
+        <!-- Download & Language -->
         <div class="download-buttons" id="summaryBtns" style="display:none;">
             <button class="download-btn" onclick="downloadTxt('summary')">TXT</button>
             <button class="download-btn" onclick="downloadPdf('summary')">PDF</button>
@@ -98,57 +99,104 @@ const player = document.getElementById("player");
 const transcriptBtns = document.getElementById("transcriptBtns");
 const summaryBtns = document.getElementById("summaryBtns");
 
-// Upload success
+// Show upload success message
 fileInput.addEventListener("change", () => {
     errorEl.textContent = "";
-    if (fileInput.files.length > 0) {
-        const ext = fileInput.files[0].name.split('.').pop().toLowerCase();
-        if (ext === "mp3" || ext === "wav") {
+    if(fileInput.files.length > 0){
+        const file = fileInput.files[0];
+        const ext = file.name.split('.').pop().toLowerCase();
+        if(ext === "mp3" || ext === "wav"){
             successMsg.classList.add("show");
-            setTimeout(() => successMsg.classList.remove("show"), 3000);
+            setTimeout(() => { successMsg.classList.remove("show"); }, 3000);
         } else {
+            successMsg.classList.remove("show");
             errorEl.textContent = "❌ Only MP3 or WAV files allowed";
         }
     }
 });
 
 // Transcribe audio
-async function uploadAudio() {
-    if (!fileInput.files.length) {
+async function uploadAudio(){
+    if(!fileInput.files.length){
         errorEl.textContent = "❌ Please select an audio file";
+        return;
+    }
+    const file = fileInput.files[0];
+    const ext = file.name.split('.').pop().toLowerCase();
+    if(ext !== "mp3" && ext !== "wav"){
+        errorEl.textContent = "❌ Only MP3 or WAV files allowed";
         return;
     }
 
     processing.style.display = "flex";
+    transcriptEl.textContent = "";
+    summaryEl.textContent = "";
     errorEl.textContent = "";
     transcriptBtns.style.display = "none";
     summaryBtns.style.display = "none";
     player.style.display = "none";
 
     const formData = new FormData();
-    formData.append("audio", fileInput.files[0]);
+    formData.append("audio", file);
 
-    try {
-        const res = await fetch("/", { method: "POST", body: formData });
-        const data = await res.json();
+    try{
+        const response = await fetch("/", { method:"POST", body: formData });
+        const data = await response.json();
         processing.style.display = "none";
 
-        if (data.error) {
+        if(data.error){
             errorEl.textContent = data.error;
         } else {
             transcriptEl.textContent = data.transcript;
             summaryEl.textContent = data.summary;
-            player.src = URL.createObjectURL(fileInput.files[0]);
+            player.src = URL.createObjectURL(file);
             player.style.display = "block";
             transcriptBtns.style.display = "flex";
             summaryBtns.style.display = "flex";
         }
-    } catch {
+    } catch(err){
         processing.style.display = "none";
         errorEl.textContent = "❌ Server error. Try again later.";
     }
 }
+
+// Live translation
+async function translateContent(type){
+    const contentEl = type === "transcript" ? transcriptEl : summaryEl;
+    const langSelect = document.getElementById(type === "transcript" ? "downloadLangTranscript" : "downloadLangSummary");
+    const lang = langSelect.value;
+
+    try{
+        const res = await fetch("/translate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ content: contentEl.textContent, lang })
+        });
+        const data = await res.json();
+        contentEl.textContent = data.translated;
+    } catch(err){
+        console.error(err);
+    }
+}
+
+// Translate on language change
+document.getElementById("downloadLangTranscript").addEventListener("change", ()=>translateContent("transcript"));
+document.getElementById("downloadLangSummary").addEventListener("change", ()=>translateContent("summary"));
+
+// Downloads
+function downloadTxt(type){
+    const content = type === "transcript" ? transcriptEl.textContent : summaryEl.textContent;
+    const lang = type === "transcript" ? document.getElementById("downloadLangTranscript").value : document.getElementById("downloadLangSummary").value;
+    window.location.href = `/download/txt?content=${encodeURIComponent(content)}&type=${type}&lang=${lang}`;
+}
+function downloadPdf(type){
+    const content = type === "transcript" ? transcriptEl.textContent : summaryEl.textContent;
+    const lang = type === "transcript" ? document.getElementById("downloadLangTranscript").value : document.getElementById("downloadLangSummary").value;
+    window.location.href = `/download/pdf?content=${encodeURIComponent(content)}&type=${type}&lang=${lang}`;
+}
 </script>
+
+<script src="{{ url_for('static', filename='theme.js') }}"></script>
 
 </body>
 </html>
