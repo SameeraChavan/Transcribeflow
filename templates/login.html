@@ -5,6 +5,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+
+    <button id="themeBtn" class="theme-btn" onclick="toggleTheme()">☀ Light</button>
+
 <div class="card">
     <h1>Login</h1>
 
@@ -21,5 +24,8 @@
         <a href="{{ url_for('forgot') }}">Forgot Password?</a>
     </p>
 </div>
+
+<script src="{{ url_for('static', filename='theme.js') }}"></script>
+
 </body>
 </html>
